@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: school-management-api
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: school-management-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: school-management-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: school-management-db
+          property: password
+      - key: DB_NAME
+        value: school_management
+      - key: DB_PORT
+        fromDatabase:
+          name: school-management-db
+          property: port
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: school-management-db
+    databaseName: school_management
+    user: school_admin

@@ -7,6 +7,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "start": "node server.js",
+    "start:render": "node start-render.js",
     "dev": "nodemon server.js",
     "simple": "node simple-server.js",
     "simple:dev": "nodemon simple-server.js",
