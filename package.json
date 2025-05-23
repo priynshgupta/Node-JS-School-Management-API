@@ -1,0 +1,39 @@
+{
+  "name": "node.js_apis_for_school_management",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "simple": "node simple-server.js",
+    "simple:dev": "nodemon simple-server.js",
+    "lint": "echo \"No linting configured\"",
+    "postman": "echo \"Importing Postman collection from ./postman_collection.json\"",
+    "prod": "pm2 start server.js --name \"school-management-api\"",
+    "prod:stop": "pm2 stop school-management-api",
+    "prod:logs": "pm2 logs school-management-api"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1"
+  }
+}
