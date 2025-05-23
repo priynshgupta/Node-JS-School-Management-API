@@ -215,3 +215,55 @@ If you're having trouble connecting to the database:
 4. Make sure the database exists (run the setup SQL)
 5. If using MySQL 8+, ensure the authentication plugin is compatible with the mysql2 client
 4. Check the server logs for specific error messages
+
+## Deployment
+
+### Deploy on Render
+
+This project is configured to be easily deployed on [Render](https://render.com/):
+
+1. **Sign up for a Render account** and connect your GitHub repository
+
+2. **Create a PostgreSQL Database** on Render:
+   - From the Dashboard, click "New" and select "PostgreSQL"
+   - Set a name for your database (e.g., "school-management-db")
+   - Choose the free tier or select a plan based on your needs
+   - Click "Create Database" and note the connection details
+
+3. **Deploy the Web Service**:
+   - Click "New" and select "Web Service"
+   - Connect your GitHub repository
+   - Name: "school-management-api"
+   - Runtime: Node
+   - Build Command: `npm install`
+   - Start Command: `npm run start:render`
+   - Select the free or paid instance type based on your needs
+
+4. **Set Environment Variables**:
+   - NODE_ENV: `production`
+   - USE_PG: `true`
+   - DATABASE_URL: Copy from your Render PostgreSQL database
+   - DB_SSL_ENABLED: `true`
+
+5. **Deploy** and wait for the build to complete
+
+Your API will be accessible at `https://school-management-api.onrender.com` (or your custom URL).
+
+## Live Demo
+
+The live API is deployed at [https://school-management-api.onrender.com](https://school-management-api.onrender.com)
+
+You can test it using the provided Postman collection or with these example commands:
+
+```bash
+# Check API health
+curl https://school-management-api.onrender.com/health
+
+# Add a school
+curl -X POST https://school-management-api.onrender.com/addSchool \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test School","address":"123 Test St","latitude":40.7128,"longitude":-74.0060}'
+
+# List schools by proximity
+curl "https://school-management-api.onrender.com/listSchools?latitude=40.7128&longitude=-74.0060"
+```
