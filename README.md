@@ -1,13 +1,23 @@
-# Simplified School Management API
+# Node.js School Management API
 
-A streamlined version of the School Management API with just the core functionality. This version simplifies the original complex implementation to focus on the core features without the overhead of authentication, caching, and other advanced features.
+A streamlined Node.js API for school management with Express.js and MySQL. This API allows you to add schools with their geographical coordinates and retrieve schools sorted by proximity to a specified location.
+
+![API Screenshot](images/1.png)
 
 ## Features
 
-- Add schools with location information
-- List schools sorted by proximity to a given location
-- Health check endpoint
+- Add schools with location information (name, address, latitude, longitude)
+- List schools sorted by proximity to a given location using Haversine formula
+- Health check endpoint for monitoring API status
 - Automatic fallback to in-memory storage when database is unavailable
+- Comprehensive error handling and validation
+- MySQL database integration with automatic table creation
+
+## Tech Stack
+
+- **Backend**: Node.js, Express.js
+- **Database**: MySQL
+- **Testing**: Postman, custom Node.js test scripts
 
 ## Getting Started
 
@@ -15,50 +25,91 @@ A streamlined version of the School Management API with just the core functional
 
 - Node.js (v14+ recommended)
 - MySQL database (v8+ recommended)
+- Postman (for testing API endpoints)
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Configure environment variables (see below)
-4. Run the server: `npm run simple`
+1. Clone the repository:
+```bash
+git clone https://github.com/priynshgupta/Node-JS-School-Management-API.git
+```
+2. Install dependencies:
+```bash
+npm install
+```
+
 3. Configure the database:
-   - Create a MySQL database (you can use the `simple_database_setup.sql` script)
-   - Update the `.env` file with your database credentials
+   - Create a MySQL database using the `database_setup.sql` script
+   - Create a `.env` file in the root directory with the following content:
+   ```
+   PORT=3000
+   DB_HOST=127.0.0.1
+   DB_USER=root
+   DB_PASSWORD=your_password_here
+   DB_NAME=school_management
+   DB_PORT=3306
+   DB_SSL_ENABLED=true
+   ```
+   - Adjust the MySQL connection details according to your setup
 
 ### Database Setup
 
 #### Using MySQL Workbench
 
 1. Open MySQL Workbench and connect to your MySQL server
-2. Make sure you're using the correct port (default is 3306, but your connection uses port 3309)
-3. The application will automatically create the database and tables if they don't exist
+2. Run the following SQL script to create the database and tables:
+```sql
+CREATE DATABASE IF NOT EXISTS school_management;
+USE school_management;
+
+CREATE TABLE IF NOT EXISTS schools (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  latitude FLOAT NOT NULL,
+  longitude FLOAT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 #### Alternative: Manual Setup
 
-You can also run the following commands to set up your database:
-
+You can run the SQL script from the command line:
 ```bash
-mysql -u root -p < simple_database_setup.sql
+mysql -u root -p < database_setup.sql
 ```
-
-Or connect to MySQL and run the commands in the SQL file manually.
 
 ### Start the Application
 
-To run the simplified version:
+Run the server:
 
 ```bash
 # Development mode with auto-reload
-npm run simple:dev
+npm run dev
 
 # Production mode
-npm run simple
+npm start
 ```
 
 ## API Endpoints
 
-### Add a School
+### 1. Health Check
+
+```
+GET /health
+```
+
+Response:
+```json
+{
+  "success": true,
+  "message": "Server is running",
+  "database": "connected",
+  "timestamp": "2025-05-23T15:00:41.186Z"
+}
+```
+
+### 2. Add a School
 
 ```
 POST /addSchool
@@ -74,16 +125,53 @@ Request body:
 }
 ```
 
-### List Schools by Proximity
+Response:
+```json
+{
+  "success": true,
+  "message": "School added successfully",
+  "data": {
+    "id": 1,
+    "name": "School Name",
+    "address": "School Address",
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  }
+}
+```
+
+### 3. List Schools by Proximity
 
 ```
 GET /listSchools?latitude=40.7128&longitude=-74.0060
 ```
 
-### Health Check
-
-```
-GET /health
+Response:
+```json
+{
+  "success": true,
+  "message": "Schools retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "name": "Test High School",
+      "address": "123 API Test Road",
+      "latitude": 37.7749,
+      "longitude": -122.419,
+      "created_at": "2025-05-23T15:00:41.000Z",
+      "distance": 0.03515643045689034
+    },
+    {
+      "id": 2,
+      "name": "Central High School",
+      "address": "123 Main St, Anytown",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "created_at": "2025-05-23T14:55:33.000Z",
+      "distance": 4129.08616505731
+    }
+  ]
+}
 ```
 
 ## Environment Variables
@@ -95,7 +183,7 @@ Configure these in the `.env` file:
 - `DB_USER`: MySQL username (default: root)
 - `DB_PASSWORD`: MySQL password
 - `DB_NAME`: Database name (default: school_management)
-- `DB_PORT`: MySQL port (default: 3306, your setup uses 3309)
+- `DB_PORT`: MySQL port (default: 3306)
 - `DB_SSL_ENABLED`: Enable SSL for DB connection (true/false)
 
 ## Testing the API
